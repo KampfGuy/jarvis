@@ -3,9 +3,9 @@
 This Shortcut sends what you say to the Jarvis API and reads the reply aloud. It works from Siri, the lock screen, the Action Button and the home screen, with no app open.
 
 **API endpoint:** `POST https://grokchan-api.kampfguy.workers.dev/jarvis`
-**Request body (JSON):** `{"text": "your question"}`
+**Request body (JSON):** `{"text": "your question"}`, optionally with `"model"` set to one of `nvidia/nemotron-3-ultra-550b-a55b:free` (default), `nvidia/nemotron-3-super-120b-a12b:free`, `nvidia/nemotron-3.5-super-vl:free`, `poolside/laguna-s-2.1:free`, `google/gemma-4-31b-it:free` (unknown values use the default; busy models fall back to the others)
 **Required header:** `X-Access-Password: <your access password>`
-**Response:** `{"reply": "plain-text answer"}`
+**Response:** `{"reply": "plain-text answer", "model": "model that answered"}`
 
 ## Build it (Shortcuts app, about 2 minutes)
 

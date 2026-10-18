@@ -31,6 +31,9 @@ button{font:inherit;color:inherit;cursor:pointer}
 .menu button{display:block;width:100%;text-align:left;background:none;border:0;padding:11px 12px;border-radius:9px;font-size:15px}
 .menu button:active{background:rgba(79,227,255,.12)}
 .menu[hidden]{display:none}
+.menu-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 8px 8px 12px;font-size:15px}
+.menu-row select{flex:1;max-width:170px;font:inherit;font-size:14px;color:var(--txt);background:rgba(0,0,0,.35);border:1px solid var(--cy-dim);border-radius:9px;padding:6px 8px;outline:0}
+.menu-row select:focus{border-color:var(--cy)}
 
 /* orb */
 .orb-wrap{position:relative;flex:0 0 auto;height:clamp(170px,36dvh,330px);display:grid;place-items:center;transition:height .3s ease}

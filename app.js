@@ -3,7 +3,9 @@
 const API="https://grokchan-api.kampfguy.workers.dev";
 const $=id=>document.getElementById(id);
 const log=$("log"),q=$("q"),body=document.body;
-const LS={pw:"jv_pw",hist:"jv_hist",mute:"jv_mute",voice:"jv_voice"};
+const LS={pw:"jv_pw",hist:"jv_hist",mute:"jv_mute",voice:"jv_voice",model:"jv_model"};
+// Free OpenRouter models accepted by grokchan-api (keep in sync with its MODELS list). "" = server default.
+const MODELS=[["","Auto (default)"],["nvidia/nemotron-3-ultra-550b-a55b:free","Nemotron 3 Ultra"],["nvidia/nemotron-3-super-120b-a12b:free","Nemotron 3 Super"],["nvidia/nemotron-3.5-super-vl:free","Nemotron 3.5 Super VL"],["poolside/laguna-s-2.1:free","Laguna S 2.1"],["google/gemma-4-31b-it:free","Gemma 4 31B"]];
 let hist=[];try{hist=JSON.parse(localStorage.getItem(LS.hist)||"[]").filter(m=>m&&m.role&&typeof m.content==="string").slice(-20);}catch{hist=[];}
 let busy=false,pendingText="";
 
@@ -157,7 +159,7 @@ async function send(text){
   const typing=addTyping();
   try{
     const ac=new AbortController();const to=setTimeout(()=>ac.abort(),60000);
-    const r=await fetch(API+"/chat",{method:"POST",signal:ac.signal,headers:{"Content-Type":"application/json","X-Access-Password":pw()},body:JSON.stringify({character:"jarvis",messages:hist.slice(-20)})});
+    const r=await fetch(API+"/chat",{method:"POST",signal:ac.signal,headers:{"Content-Type":"application/json","X-Access-Password":pw()},body:JSON.stringify({character:"jarvis",messages:hist.slice(-20),...(model()?{model:model()}:{})})});
     clearTimeout(to);typing.remove();
     if(r.status===401){
       hist.pop();saveHist();
@@ -197,6 +199,14 @@ $("voiceBtn").onclick=()=>{ // cycle through English voices
   localStorage.setItem(LS.voice,voice.name);$("voiceName").textContent=voice.name.replace(/\s*\(.*\)/,"")+" ("+voice.lang+")";
   unlockAudio();speak("This is "+voice.name.replace(/\s*\(.*\)/,"")+", sir.",true);
 };
+
+/* ---------- model picker ---------- */
+function model(){const m=localStorage.getItem(LS.model)||"";return MODELS.some(x=>x[0]===m)?m:"";}
+const modelSel=$("modelSel");
+MODELS.forEach(([id,name])=>modelSel.add(new Option(name,id)));
+modelSel.value=model();
+modelSel.onchange=()=>{localStorage.setItem(LS.model,modelSel.value);toggleMenu(false);
+  const name=MODELS.find(x=>x[0]===modelSel.value)[1];addMsg("assistant",modelSel.value?"Switching to "+name+", sir. Should it be unavailable, I shall fall back to the others.":"Back to the default model, sir.");};
 
 /* ---------- PWA ---------- */
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
