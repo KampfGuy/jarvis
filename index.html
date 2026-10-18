@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Jarvis</title>
+<meta name="description" content="J.A.R.V.I.S. personal voice assistant">
+<meta name="theme-color" content="#03080f">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Jarvis">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.json?v=3">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
+<link rel="icon" type="image/png" href="favicon.png?v=3">
+<link rel="stylesheet" href="style.css?v=3">
+</head>
+<body data-state="idle">
+<div class="grid-bg" aria-hidden="true"></div>
+<header class="top">
+  <div class="brand"><span class="dot"></span>J.A.R.V.I.S.</div>
+  <div class="tools">
+    <button id="mute" class="icon-btn" aria-label="Mute voice" title="Voice on/off"></button>
+    <button id="menuBtn" class="icon-btn" aria-label="Menu" aria-haspopup="true" aria-expanded="false">
+      <svg viewBox="0 0 24 24" width="20" height="20"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+    </button>
+    <div id="menu" class="menu" hidden>
+      <button id="clearBtn">Clear conversation</button>
+      <button id="pwBtn">Change access password</button>
+      <button id="voiceBtn">Voice: <span id="voiceName">auto</span></button>
+    </div>
+  </div>
+</header>
+
+<section class="orb-wrap" aria-hidden="true">
+  <div class="hud-label hl-l"><span id="clock">--:--</span><small>LOCAL</small></div>
+  <div class="hud-label hl-r"><span id="stateTxt">STANDBY</span><small>STATUS</small></div>
+  <div class="orb" id="orb">
+    <svg class="rings" viewBox="0 0 200 200">
+      <defs>
+        <radialGradient id="cg" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ffffff"/>
+          <stop offset="35%" stop-color="#bff6ff"/>
+          <stop offset="70%" stop-color="#3fd8ff" stop-opacity=".55"/>
+          <stop offset="100%" stop-color="#0aa0d0" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <g class="r r1"><circle cx="100" cy="100" r="96" fill="none" stroke="currentColor" stroke-width=".6" stroke-dasharray="2 4" opacity=".55"/></g>
+      <g class="r r2"><circle cx="100" cy="100" r="88" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="60 18 8 18" opacity=".8"/></g>
+      <g class="r r3"><circle cx="100" cy="100" r="78" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="1 3" opacity=".7"/>
+        <path d="M100 18 a82 82 0 0 1 58 24" fill="none" stroke="currentColor" stroke-width="3" opacity=".9"/>
+        <path d="M100 182 a82 82 0 0 1 -58 -24" fill="none" stroke="currentColor" stroke-width="3" opacity=".9"/></g>
+      <g class="r r4"><circle cx="100" cy="100" r="66" fill="none" stroke="currentColor" stroke-width="7" stroke-dasharray="14 6" opacity=".55"/></g>
+      <g class="r r5"><circle cx="100" cy="100" r="54" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".9"/>
+        <polygon points="100,62 133,119 67,119" fill="none" stroke="#c9f8ff" stroke-width="2" opacity=".9"/></g>
+      <circle class="core" cx="100" cy="100" r="40" fill="url(#cg)"/>
+    </svg>
+  </div>
+  <div class="wave" id="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+</section>
+
+<main id="log" class="log" aria-live="polite"></main>
+
+<div id="hint" class="hint" hidden></div>
+
+<form id="composer" class="composer" autocomplete="off">
+  <div class="field">
+    <textarea id="q" rows="1" placeholder="Speak or type, sir…" enterkeyhint="send" autocapitalize="sentences" autocorrect="on" spellcheck="true"></textarea>
+    <button id="send" class="send" type="submit" aria-label="Send">
+      <svg viewBox="0 0 24 24" width="20" height="20"><path d="M3 11.5 21 3l-8.5 18-2.2-7.3z" fill="currentColor"/></svg>
+    </button>
+  </div>
+  <button id="mic" class="mic" type="button" aria-label="Tap to talk">
+    <svg viewBox="0 0 24 24" width="30" height="30"><path fill="currentColor" d="M12 15a3.5 3.5 0 0 0 3.5-3.5v-6a3.5 3.5 0 0 0-7 0v6A3.5 3.5 0 0 0 12 15Zm6-3.5a1 1 0 1 0-2 0 4 4 0 0 1-8 0 1 1 0 1 0-2 0 6 6 0 0 0 5 5.9V20H8.5a1 1 0 1 0 0 2h7a1 1 0 1 0 0-2H13v-2.6a6 6 0 0 0 5-5.9Z"/></svg>
+  </button>
+</form>
+
+<div id="gate" class="gate" hidden>
+  <form id="gateForm" class="gate-card">
+    <img src="icons/icon-192.png" alt="" width="84" height="84">
+    <h1>Identity verification</h1>
+    <p>Please enter your access password, sir.</p>
+    <input id="pw" type="password" autocomplete="current-password" placeholder="Access password" required>
+    <p id="gateErr" class="err" hidden></p>
+    <button type="submit">Authorise</button>
+  </form>
+</div>
+
+<script src="app.js?v=3"></script>
+</body>
+</html>
